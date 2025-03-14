@@ -4,7 +4,8 @@ import react from "@astrojs/react";
 
 export default defineConfig({
   integrations: [tailwind(), react()],
-  site: "https://nghiaapd.github.io/", // ✅ Đúng URL
-  base: "/vehicle_registration_landing_page/", // ✅ Đúng base path
+  site: "https://nghiaapd.github.io",
+  base: "/vehicle_registration_landing_page",
   output: "static", // 🚀 Đảm bảo build thành HTML tĩnh
+  outDir: "./dist",
 });
