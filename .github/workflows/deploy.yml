@@ -7,9 +7,7 @@ on:
 
 # Thiết lập quyền cần thiết
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write # Cần quyền này để ghi vào gh-pages branch
 
 # Cho phép một deployment cùng lúc
 concurrency:
@@ -19,9 +17,6 @@ concurrency:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -37,25 +32,9 @@ jobs:
       - name: Build
         run: bun run build
       
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
-      
-      - name: Upload artifact
-        run: |
-          # Nén thư mục dist thành artifact
-          cd dist
-          zip -r ../artifact.zip .
-          cd ..
-          # Tạo thư mục artifact
-          mkdir -p ./_site
-          mv artifact.zip ./_site/
-          echo "Artifact created"
-      
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: _site
-      
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v1
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages
