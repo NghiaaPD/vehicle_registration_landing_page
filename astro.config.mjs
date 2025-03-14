@@ -8,4 +8,8 @@ export default defineConfig({
   base: "/vehicle_registration_landing_page",
   output: "static", // 🚀 Đảm bảo build thành HTML tĩnh
   outDir: "./dist",
+  trailingSlash: 'always',
+  build: {
+    format: 'directory',
+  }
 });
