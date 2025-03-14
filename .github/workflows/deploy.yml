@@ -17,14 +17,14 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
       
       - name: Install Bun
         uses: oven-sh/setup-bun@v1
@@ -37,18 +37,25 @@ jobs:
       - name: Build
         run: bun run build
       
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+      
       - name: Upload artifact
+        run: |
+          # Nén thư mục dist thành artifact
+          cd dist
+          zip -r ../artifact.zip .
+          cd ..
+          # Tạo thư mục artifact
+          mkdir -p ./_site
+          mv artifact.zip ./_site/
+          echo "Artifact created"
+      
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: dist
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
+          path: _site
+      
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
